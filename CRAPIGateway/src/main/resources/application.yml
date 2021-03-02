@@ -1,0 +1,25 @@
+server:
+  port: 9080
+  
+  
+  
+spring:
+  application:
+    name: CAR-API-GATEWAY
+  cloud:
+    gateway:      routes:      - id: CAR-LISTING-SERVICE
+        uri: lb://CAR-LISTING-SERVICE        predicates:          - Path=/carlist/**      - id: CAR-BOOKING-SERVICE
+        uri: lb://CAR-BOOKING-SERVICE
+        predicates:
+          - Path=/booking/**
+          
+          
+eureka:
+    client:
+      register-with-eureka: true
+      fetch-registry: true
+      service-url:
+        defaultZone: http://localhost:8761/eureka/
+    instance:
+      hostname: localhost
+  

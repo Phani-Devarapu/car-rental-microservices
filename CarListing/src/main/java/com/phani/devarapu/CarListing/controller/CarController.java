@@ -3,6 +3,8 @@ package com.phani.devarapu.CarListing.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,8 @@ import com.phani.devarapu.CarListing.service.CarService;
 
 public class CarController {
 	
+	  private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);
+	
 	
 	@Autowired
 	private CarService carServ;
@@ -41,12 +45,17 @@ public class CarController {
 	@RequestMapping(value="/addCar", method=RequestMethod.POST)
 	public ResponseEntity<Car> addNewCar(@RequestBody Car adCar)
 	{
+		LOGGER.info("Inside the " + getClass() +" and inside addNewCar() method "+ " Request body contains" + adCar.toString() );
+		
 		Car addNewCar = carServ.addNewCar(adCar);
 		
 		URI uri = ServletUriComponentsBuilder
 											.fromCurrentRequest()
 											.path("/{id}")
 											.buildAndExpand(addNewCar.getCarId()).toUri();
+		
+		
+		LOGGER.info("Inside the " + getClass() +" and inside addNewCar() method "+ " the Response is " +  uri);
 		
 		return ResponseEntity.created(uri).build();
 		
@@ -56,6 +65,8 @@ public class CarController {
 	@ResponseBody
 	public Car getById(@PathVariable("id") int id)
 	{
+		
+		LOGGER.info("Inside the " + getClass() +" and inside getById() method "+ " Request body contains id = " +  id );
 		Car c = carServ.getById(id);
 		System.out.println(c.toString());
 		
@@ -63,6 +74,8 @@ public class CarController {
 		{
 			throw new CarnotFoundException("The Id " + id);
 		}
+		
+		LOGGER.info("Inside the " + getClass() +" and inside getById() method "+  " the response is " + c.toString());
 		
 		return c;
 		

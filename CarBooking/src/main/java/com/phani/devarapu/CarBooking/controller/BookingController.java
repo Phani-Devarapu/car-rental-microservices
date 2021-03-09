@@ -1,5 +1,7 @@
 package com.phani.devarapu.CarBooking.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +19,13 @@ import com.phani.devarapu.CarBooking.model.CarInfo;
 import com.phani.devarapu.CarBooking.service.BookingService;
 
 
+
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
+	
+	 private static final Logger LOGGER = LoggerFactory.getLogger(BookingController.class);
+		
 	
 	@Autowired
 	private BookingService bookingServ;
@@ -35,20 +41,37 @@ public class BookingController {
 	@RequestMapping(value="/addBooking", method=RequestMethod.POST)
 	public BookingCar addNewCar(@RequestBody BookingCar booking)
 	{
+		String nameofCurrMethod = new Object() {} 
+        .getClass() 
+        .getEnclosingMethod() 
+        .getName(); 
 		
+		LOGGER.info("insdie the " + getClass().getSimpleName() + " and " + nameofCurrMethod	 + "method");
+		
+		LOGGER.info("The request body is " + booking.toString());
 		
 		BookingCar savedBooking = bookingServ.addBooking(booking);
 		
 		return savedBooking;
 		
 		
-	}
-	
+	}	
+		
 
 	@PostMapping("/bookingById/{id}")
 	@ResponseBody
 	public  BookingInfoVO getById(@PathVariable("id") int id)
 	{
+		
+		 String nameofCurrMethod = new Object() {} 
+         .getClass() 
+         .getEnclosingMethod() 
+         .getName(); 
+		
+		LOGGER.info("insdie the " + getClass().getSimpleName() + " and " + nameofCurrMethod	 + "method");
+		
+		LOGGER.info("The path variable is " + id);
+		
 		 BookingCar byId = bookingServ.getById(id);
 		 
 		 

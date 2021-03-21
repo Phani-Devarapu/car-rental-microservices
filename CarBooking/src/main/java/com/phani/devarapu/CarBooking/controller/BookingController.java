@@ -1,5 +1,7 @@
 package com.phani.devarapu.CarBooking.controller;
 
+import java.net.URI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.phani.devarapu.CarBooking.model.BookingCar;
 import com.phani.devarapu.CarBooking.model.BookingInfoVO;
@@ -39,7 +42,7 @@ public class BookingController {
 	
 	
 	@RequestMapping(value="/addBooking", method=RequestMethod.POST)
-	public BookingCar addNewCar(@RequestBody BookingCar booking)
+	public ResponseEntity<Object> addNewCar(@RequestBody BookingCar booking)
 	{
 		String nameofCurrMethod = new Object() {} 
         .getClass() 
@@ -52,7 +55,10 @@ public class BookingController {
 		
 		BookingCar savedBooking = bookingServ.addBooking(booking);
 		
-		return savedBooking;
+		URI uriSaved = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedBooking.getBookingId()).toUri();
+		
+		 return ResponseEntity.created(uriSaved).build();
+		//return savedBooking;
 		
 		
 	}	
@@ -69,16 +75,22 @@ public class BookingController {
          .getName(); 
 		
 		LOGGER.info("insdie the " + getClass().getSimpleName() + " and " + nameofCurrMethod	 + "method");
-		
 		LOGGER.info("The path variable is " + id);
 		
 		 BookingCar byId = bookingServ.getById(id);
 		 
 		 
 		CarInfo car = restTemplate.getForObject("http://CAR-LISTING-SERVICE/carlist/carById/" + byId.getCarId(), CarInfo.class);
+		
+		if(car==null)
+		{
+			throw new CarNotFoundException("Car with id-" + id + "Is not found");
+		}
+	
 		booingVo.setBookng(byId);
+		
 		booingVo.setCar(car);
-		 System.out.println(booingVo.toString());
+	   System.out.println(booingVo.toString());
 		return booingVo;
 		
 		
